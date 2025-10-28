@@ -1,6 +1,14 @@
-import { createChatInDB } from "../repository/chat.repository";
+import {
+  createChatInDB,
+  updateChatTitleInDB,
+} from "../repository/chat.repository";
 import { addMessageToDB } from "../repository/messages.repository";
-import { ICreateChatSchema } from "../route/chat.route";
+import { storePresentationsInDB } from "../repository/presentations.repository";
+import {
+  ICreateChatSchema,
+  IGeneratePresentationSchema,
+} from "../route/chat.route";
+import { generatePresentationService } from "../services/gemini.service";
 
 export async function createChat(payload: ICreateChatSchema) {
   try {
@@ -15,5 +23,25 @@ export async function createChat(payload: ICreateChatSchema) {
     return chat;
   } catch (error) {
     throw new Error("Error creating chat");
+  }
+}
+
+export async function generatePresentation(
+  payload: IGeneratePresentationSchema
+) {
+  try {
+    // gemini llm api call to generate presentation slides along with chat title
+    const response = await generatePresentationService(payload.prompt);
+    // store generated slides in presentation collection
+    await storePresentationsInDB({
+      chatId: payload.chatId,
+      slides: response.slides,
+    });
+    await updateChatTitleInDB({
+      chatId: payload.chatId,
+      title: response.title,
+    });
+  } catch (error) {
+    throw new Error("Error generating presentation");
   }
 }

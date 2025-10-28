@@ -29,4 +29,25 @@ chatRouter.post("/create", async (c) => {
   }
 });
 
+const GeneratePresentationSchema = z.object({
+  prompt: z.string(),
+  chatId: z.string(),
+});
+
+export type IGeneratePresentationSchema = z.infer<
+  typeof GeneratePresentationSchema
+>;
+
+chatRouter.post("/generate", async (c) => {
+  try {
+    const validation = GeneratePresentationSchema.safeParse(await c.req.json());
+    if (!validation.success) {
+      throw validation.error;
+    }
+    const payload = {
+      ...validation.data,
+    };
+  } catch (error) {}
+});
+
 export default chatRouter;
