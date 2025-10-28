@@ -8,11 +8,11 @@ const chatSchema = new mongoose.Schema({
     },
     title: {
         type: String,
-        required: true
+        required: false
     },
-    messageId: {
+    presentationId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Message",
+        ref: "Presentation",
         required: false
     },
     createdAt: {

@@ -10,7 +10,7 @@ const presentationSchema = new mongoose.Schema({
         type: Array,
         required: true
     },
-        createdAt: {
+    createdAt: {
         type: Date,
         default: Date.now
     },
